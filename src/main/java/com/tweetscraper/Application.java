@@ -1,13 +1,15 @@
-package com.twitterscraper.tweetscrapper;
+package com.tweetscraper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-public class TweetscrapperApplication {
+@EnableScheduling
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TweetscrapperApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }
