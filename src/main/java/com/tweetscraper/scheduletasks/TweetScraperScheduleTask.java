@@ -3,6 +3,8 @@ package com.tweetscraper.scheduletasks;
 import java.nio.charset.Charset;
 import java.util.Random;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+import com.tweetscraper.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

@@ -11,3 +11,8 @@
 **  Gives all privileges to the new user on the newly created database **
 
 	grant all on twitter_scraper.* to 'springuser'@'%';
+
+	
+** Create the Image directory for storing images and update below-mentioned property in the application.properties **
+	
+	image.directory
