@@ -1,12 +1,13 @@
 package com.tweetscraper.scheduletasks;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Random;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import com.tweetscraper.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.social.twitter.api.CursoredList;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Component;
 
 import com.tweetscraper.entity.TweetUserEntity;
@@ -17,6 +18,9 @@ public class TweetScraperScheduleTask {
 
 	@Autowired
 	private TweetUserRepository tweetUserRepository;
+	
+	@Autowired
+	private Twitter twitter;
 
 	// 1hr interval between invocations measured from the completion of the task
 	// 1hr = 60*60*1000
@@ -34,5 +38,22 @@ public class TweetScraperScheduleTask {
 		byte[] array = new byte[length]; // length is bounded by 7
 		new Random().nextBytes(array);
 		return new String(array, Charset.forName("UTF-8"));
+	}
+	
+	public ArrayList<Long> getIdList(String userName) {
+
+		long cursor = -1;
+		CursoredList<Long> listId;
+		ArrayList<Long> idList = new ArrayList<>();
+
+		do {
+			listId = twitter.friendOperations().getFollowerIdsInCursor("Riddhikgunners", cursor);
+			for (Long ids : listId) {
+				idList.add(ids);
+			}
+
+		} while ((cursor = listId.getNextCursor()) != 0);
+
+		return idList;
 	}
 }
