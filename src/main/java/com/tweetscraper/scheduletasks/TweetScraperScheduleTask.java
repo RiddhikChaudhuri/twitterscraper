@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.tweetscraper.TwitterTemplateCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.social.twitter.api.CursoredList;
@@ -20,7 +21,7 @@ public class TweetScraperScheduleTask {
 	private TweetUserRepository tweetUserRepository;
 	
 	@Autowired
-	private Twitter twitter;
+	private TwitterTemplateCreator twitterTemplateCreator;
 
 	// 1hr interval between invocations measured from the completion of the task
 	// 1hr = 60*60*1000
@@ -42,6 +43,7 @@ public class TweetScraperScheduleTask {
 	
 	public ArrayList<Long> getIdList(String userName) {
 
+		Twitter twitter = twitterTemplateCreator.getTwitterTemplate(userName);
 		long cursor = -1;
 		CursoredList<Long> listId;
 		ArrayList<Long> idList = new ArrayList<>();

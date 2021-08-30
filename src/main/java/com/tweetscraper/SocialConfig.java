@@ -16,17 +16,12 @@ public class SocialConfig {
 	@Inject
 	private Environment environment;
 
-	@Value("${twitterscraper.consumerKey}")
-	private String consumerKey;
-
-	@Value("${twitterscraper.consumerSecret}")
-	private String consumerSecret;
-
 	@Bean
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-		registry.addConnectionFactory(new TwitterConnectionFactory(environment.getProperty(consumerKey),
-				environment.getProperty(consumerSecret)));
+		registry.addConnectionFactory(new TwitterConnectionFactory(
+				environment.getProperty("twitterscraper.consumerKey"),
+				environment.getProperty("twitterscraper.consumerSecret")));
 		return registry;
 	}
 
