@@ -1,5 +1,6 @@
 package com.tweetscraper;
 
+import com.tweetscraper.config.TwitterTemplateCreator;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

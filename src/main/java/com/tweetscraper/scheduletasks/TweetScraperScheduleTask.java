@@ -4,7 +4,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.tweetscraper.TwitterTemplateCreator;
+import com.tweetscraper.config.TwitterTemplateCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.social.twitter.api.CursoredList;

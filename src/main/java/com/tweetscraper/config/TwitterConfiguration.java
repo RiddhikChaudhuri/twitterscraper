@@ -1,4 +1,4 @@
-package com.tweetscraper;
+package com.tweetscraper.config;
 
 import javax.inject.Inject;
 
@@ -11,7 +11,7 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.twitter.connect.TwitterConnectionFactory;
 
 @Configuration
-public class SocialConfig {
+public class TwitterConfiguration {
 
 	@Inject
 	private Environment environment;
