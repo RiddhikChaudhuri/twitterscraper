@@ -1,6 +1,5 @@
 package com.tweetscraper.service.implementation;
 
-import com.tweetscraper.dto.Image;
 import com.tweetscraper.entity.ImageEntity;
 import com.tweetscraper.repository.ImageRepository;
 import com.tweetscraper.service.ImageService;
@@ -27,20 +26,20 @@ public class ImageServiceImpl implements ImageService {
     private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Override
-    public ImageEntity downloadAndSave(Image image) {
+    public ImageEntity downloadAndSave(Long userId, String imageUrl) {
         try {
-            URL url = new URL(image.getImageUrl());
+            URL url = new URL(imageUrl);
             File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
             ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
             ImageEntity imageEntity = new ImageEntity();
-            imageEntity.setImageUrl(image.getImageUrl());
+            imageEntity.setImageUrl(imageUrl);
             imageEntity.setImageLocation(file.getPath());
-            imageEntity.setUserId(image.getUserId());
+            imageEntity.setUserId(userId);
 
             return imageRepository.save(imageEntity);
 
         } catch (IOException e) {
-            log.error("Unable to download and store image from {0}", image.getImageUrl());
+            log.error("Unable to download and store image from {0} for User Id {1}", imageUrl, userId);
             log.error("Stack Trace", e);
         }
         return null;

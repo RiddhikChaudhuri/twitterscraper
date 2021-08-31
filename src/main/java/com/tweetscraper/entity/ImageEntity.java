@@ -31,7 +31,7 @@ public class ImageEntity {
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "image_url")
     private String imageUrl;

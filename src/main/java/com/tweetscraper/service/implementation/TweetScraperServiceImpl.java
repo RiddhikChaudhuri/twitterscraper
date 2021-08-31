@@ -2,16 +2,15 @@ package com.tweetscraper.service.implementation;
 
 import com.tweetscraper.config.TwitterTemplateCreator;
 import com.tweetscraper.entity.TwitterUserEntity;
+import com.tweetscraper.repository.TwitterUserRepository;
+import com.tweetscraper.service.ImageService;
 import com.tweetscraper.service.TweetScraperService;
-import lombok.experimental.ExtensionMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.SearchOperations;
 import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Tweet;
-import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -20,6 +19,12 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
     @Autowired
     private TwitterTemplateCreator twitterTemplateCreator;
+
+    @Autowired
+    private TwitterUserRepository twitterUserRepository;
+
+    @Autowired
+    private ImageService imageService;
 
     @Override
     public void findTweets(String accountName) {
@@ -32,21 +37,24 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
         tweets.forEach(
                 tweet -> {
-                    TwitterUserEntity twitterUserEntity = toTwitterUserEntity(tweet.getUser());
+                    TwitterProfile twitterProfile = tweet.getUser();
+                    TwitterUserEntity twitterUserEntity = getTwitterUserEntity(twitterProfile);
+                    twitterUserRepository.save(twitterUserEntity);
+                    imageService.downloadAndSave(twitterProfile.getId(), twitterProfile.getProfileImageUrl());
                 }
         );
     }
 
-private TwitterUserEntity toTwitterUserEntity(TwitterProfile twitterProfile){
-    TwitterUserEntity entity = new TwitterUserEntity();
+    private TwitterUserEntity getTwitterUserEntity(TwitterProfile twitterProfile) {
+        TwitterUserEntity entity = new TwitterUserEntity();
 
-    entity.setUrl(twitterProfile.getUrl());
-    entity.setUserId(twitterProfile.getId());
-    entity.setProfileImageUrl(twitterProfile.getProfileImageUrl());
-    entity.setName(twitterProfile.getName());
-    entity.setScreenName(twitterProfile.getScreenName());
-    return entity;
-}
+        entity.setUrl(twitterProfile.getUrl());
+        entity.setUserId(twitterProfile.getId());
+        entity.setProfileImageUrl(twitterProfile.getProfileImageUrl());
+        entity.setName(twitterProfile.getName());
+        entity.setScreenName(twitterProfile.getScreenName());
+        return entity;
+    }
 
 }
 
