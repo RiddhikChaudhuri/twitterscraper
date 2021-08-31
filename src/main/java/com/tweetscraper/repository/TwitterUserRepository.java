@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface TwitterUserRepository extends CrudRepository<TwitterUserEntity, Integer> {
 
-    Optional<TwitterUserEntity> findByUserId(int i);
+    Optional<TwitterUserEntity> findByUserId(Long userId);
 }

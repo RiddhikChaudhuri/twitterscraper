@@ -5,6 +5,8 @@ import com.tweetscraper.entity.ImageEntity;
 import com.tweetscraper.repository.ImageRepository;
 import com.tweetscraper.service.ImageService;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     ImageRepository imageRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Override
     public ImageEntity downloadAndSave(Image image) {
         try {
@@ -36,7 +40,8 @@ public class ImageServiceImpl implements ImageService {
             return imageRepository.save(imageEntity);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Unable to download and store image from {0}", image.getImageUrl());
+            log.error("Stack Trace", e);
         }
         return null;
     }

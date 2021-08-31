@@ -27,7 +27,7 @@ public class TwitterUserRepositoryTest {
 
     @Test
     public void fetchTweeterUserUsingTwitterUserId() {
-        Optional<TwitterUserEntity> entity = repository.findByUserId(11348282);
+        Optional<TwitterUserEntity> entity = repository.findByUserId(11348282L);
         assertTrue(entity.isPresent());
         entity.ifPresent(it -> {
                     assertEquals("NASA", it.getName());
@@ -46,14 +46,14 @@ public class TwitterUserRepositoryTest {
         TwitterUserEntity entity = new TwitterUserEntity();
         entity.setName("NASA");
         entity.setScreenName("NASA");
-        entity.setUserId(11348283);
+        entity.setUserId(11348283L);
         entity.setProfileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg");
         entity.setProfileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg");
         entity.setUrl("https://t.co/TcEE6NS8nD");
         repository.save(entity);
 
 
-        Optional<TwitterUserEntity> fetchedFromDB = repository.findByUserId(11348283);
+        Optional<TwitterUserEntity> fetchedFromDB = repository.findByUserId(11348283L);
         assertTrue(fetchedFromDB.isPresent());
         fetchedFromDB.ifPresent(it -> {
                     assertEquals("NASA", it.getName());
