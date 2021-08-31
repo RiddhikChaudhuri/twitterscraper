@@ -11,14 +11,13 @@ import org.springframework.social.twitter.api.CursoredList;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Component;
 
-import com.tweetscraper.entity.TweetUserEntity;
-import com.tweetscraper.repository.TweetUserRepository;
+import com.tweetscraper.repository.TwitterUserRepository;
 
 @Component
 public class TweetScraperScheduleTask {
 
 	@Autowired
-	private TweetUserRepository tweetUserRepository;
+	private TwitterUserRepository tweetUserRepository;
 	
 	@Autowired
 	private TwitterTemplateCreator twitterTemplateCreator;
@@ -28,11 +27,13 @@ public class TweetScraperScheduleTask {
 	//@Scheduled(fixedDelay = 60*60*1000)
 	@Scheduled(fixedDelay = 5000)
 	public void scrapeTweets() {
-		TweetUserEntity user = new TweetUserEntity();
+	/*
+		TweeterUserEntity user = new TweeterUserEntity();
 		user.setName(randomString(10));
 		user.setEmail(randomString(20));
 
 		tweetUserRepository.save(user);
+	*/
 	}
 
 	private String randomString(Integer length) {

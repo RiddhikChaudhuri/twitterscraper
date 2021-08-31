@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.tweetscraper.repository.TweetUserRepository;
+import com.tweetscraper.repository.TwitterUserRepository;
 import com.tweetscraper.scheduletasks.TweetScraperScheduleTask;
 import com.tweetscraper.service.ImageService;
 
@@ -16,7 +16,7 @@ public class ApplicationTest {
 	private TweetScraperScheduleTask tweetScraperScheduleTask;
 	
 	@Autowired
-	private TweetUserRepository tweetUserRepository;
+	private TwitterUserRepository tweetUserRepository;
 	
 	@Autowired
 	private ImageService imageService;
