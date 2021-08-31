@@ -1,5 +1,8 @@
 package com.tweetscraper.service;
 
+import com.tweetscraper.dto.Image;
+import com.tweetscraper.entity.ImageEntity;
+
 public interface ImageService {
-    String downloadAndSave(String url);
+    ImageEntity downloadAndSave(Image image);
 }

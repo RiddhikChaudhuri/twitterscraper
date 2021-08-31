@@ -48,5 +48,4 @@ public class TwitterUserEntity implements Serializable {
 
 	@Column(name = "url")
 	private String url;
-
 }
