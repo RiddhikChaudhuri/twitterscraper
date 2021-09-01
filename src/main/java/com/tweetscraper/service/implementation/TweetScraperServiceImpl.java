@@ -31,7 +31,7 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
         SearchOperations searchOperations = twitterTemplateCreator.getTwitterTemplate(accountName).searchOperations();
 
-        String query = "nasa&result_type=popular";
+        String query = "BullionStar";
         SearchResults searchResults = searchOperations.search(query);
         List<Tweet> tweets = searchResults.getTweets();
 
