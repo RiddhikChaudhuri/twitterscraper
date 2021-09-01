@@ -77,14 +77,13 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 	}
 
     private TwitterUserEntity getTwitterUserEntity(TwitterProfile twitterProfile) {
-        TwitterUserEntity entity = new TwitterUserEntity();
-
-        entity.setUrl(twitterProfile.getUrl());
-        entity.setUserId(twitterProfile.getId());
-        entity.setProfileImageUrl(twitterProfile.getProfileImageUrl());
-        entity.setName(twitterProfile.getName());
-        entity.setScreenName(twitterProfile.getScreenName());
-        return entity;
+        return TwitterUserEntity.builder()
+				.url(twitterProfile.getUrl())
+				.id(twitterProfile.getId())
+				.name(twitterProfile.getName())
+				.screenName(twitterProfile.getScreenName())
+				.profileImageUrl(twitterProfile.getProfileImageUrl())
+				.build();
     }
 
 }

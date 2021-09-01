@@ -32,12 +32,8 @@ public class TwitterUserEntity implements Serializable {
 	private static final long serialVersionUID = 2370861793047189128L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Integer id;
-
-	@Column(name = "user_id")
-	private Long userId;
+	private Long id;
 
 	@Column(name = "name")
 	private String name;

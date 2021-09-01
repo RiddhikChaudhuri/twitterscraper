@@ -27,7 +27,7 @@ public class TwitterUserRepositoryTest {
 
     @Test
     public void fetchTweeterUserUsingTwitterUserId() {
-        Optional<TwitterUserEntity> entity = repository.findByUserId(11348282L);
+        Optional<TwitterUserEntity> entity = repository.findById(11348282L);
         assertTrue(entity.isPresent());
         entity.ifPresent(it -> {
                     assertEquals("NASA", it.getName());
@@ -43,21 +43,38 @@ public class TwitterUserRepositoryTest {
     @Test
     public void saveTwitterUserInformation() {
 
-        TwitterUserEntity entity = new TwitterUserEntity();
-        entity.setName("NASA");
-        entity.setScreenName("NASA");
-        entity.setUserId(11348283L);
-        entity.setProfileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg");
-        entity.setProfileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg");
-        entity.setUrl("https://t.co/TcEE6NS8nD");
+        TwitterUserEntity entity = TwitterUserEntity.builder()
+                .name("NASA").screenName("NASA").id(11348283L).profileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
+                .profileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
+                .url("https://t.co/TcEE6NS8nD")
+                .build();
         repository.save(entity);
 
 
-        Optional<TwitterUserEntity> fetchedFromDB = repository.findByUserId(11348283L);
+        Optional<TwitterUserEntity> fetchedFromDB = repository.findById(11348283L);
         assertTrue(fetchedFromDB.isPresent());
         fetchedFromDB.ifPresent(it -> {
                     assertEquals("NASA", it.getName());
                     assertEquals("NASA", it.getScreenName());
+                    assertEquals("https://t.co/TcEE6NS8nD", it.getUrl());
+                    assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrl());
+                    assertEquals("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrlHttps());
+                }
+        );
+
+
+        TwitterUserEntity updatedEntity = TwitterUserEntity.builder()
+                .name("NASA Updated").screenName("NASA Updated").id(11348283L).profileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
+                .profileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
+                .url("https://t.co/TcEE6NS8nD")
+                .build();
+        repository.save(updatedEntity);
+
+        Optional<TwitterUserEntity> updatedData = repository.findById(11348283L);
+        assertTrue(updatedData.isPresent());
+        updatedData.ifPresent(it -> {
+                    assertEquals("NASA Updated", it.getName());
+                    assertEquals("NASA Updated", it.getScreenName());
                     assertEquals("https://t.co/TcEE6NS8nD", it.getUrl());
                     assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrl());
                     assertEquals("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrlHttps());

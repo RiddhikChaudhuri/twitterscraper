@@ -8,7 +8,5 @@ import com.tweetscraper.entity.TwitterUserEntity;
 import java.util.Optional;
 
 @Repository
-public interface TwitterUserRepository extends CrudRepository<TwitterUserEntity, Integer> {
-
-    Optional<TwitterUserEntity> findByUserId(Long userId);
+public interface TwitterUserRepository extends CrudRepository<TwitterUserEntity, Long> {
 }
