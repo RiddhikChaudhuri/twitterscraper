@@ -30,22 +30,31 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
     @Autowired
     private ImageService imageService;
-    
+
     @Autowired
     private TweetRepository tweetRepository;
-    
+
     @Value("${image.directory}")
     private String tweetImageDirectory;
 
     @Override
-	public void findTweets(String accountName) {
+    public void findTweets(String accountName) {
 
-		SearchOperations searchOperations = twitterTemplateCreator.getTwitterTemplate(accountName).searchOperations();
+        SearchOperations searchOperations = twitterTemplateCreator.getTwitterTemplate(accountName).searchOperations();
 
-		String query = "BullionStar";
-		SearchResults searchResults = searchOperations.search(query);
-		List<Tweet> tweets = searchResults.getTweets();
+        String query = "BullionStar";
 
+		boolean isLastPage = false;
+
+		while (isLastPage){
+			SearchResults searchResults = searchOperations.search(query);
+			List<Tweet> tweets = searchResults.getTweets();
+			processTweets(tweets);
+			isLastPage = searchResults.isLastPage();
+		}
+	}
+
+	private void processTweets(List<Tweet> tweets) {
 		tweets.forEach(tweet -> {
 			TweetEntity tweetEntity = TweetEntity.builder().tweetId(tweet.getId()).retweetCount(tweet.getRetweetCount())
 					.favoriteCount(tweet.getFavoriteCount()).build();
@@ -76,14 +85,14 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 		});
 	}
 
-    private TwitterUserEntity getTwitterUserEntity(TwitterProfile twitterProfile) {
+	private TwitterUserEntity getTwitterUserEntity(TwitterProfile twitterProfile) {
         return TwitterUserEntity.builder()
-				.url(twitterProfile.getUrl())
-				.id(twitterProfile.getId())
-				.name(twitterProfile.getName())
-				.screenName(twitterProfile.getScreenName())
-				.profileImageUrl(twitterProfile.getProfileImageUrl())
-				.build();
+                .url(twitterProfile.getUrl())
+                .id(twitterProfile.getId())
+                .name(twitterProfile.getName())
+                .screenName(twitterProfile.getScreenName())
+                .profileImageUrl(twitterProfile.getProfileImageUrl())
+                .build();
     }
 
 }

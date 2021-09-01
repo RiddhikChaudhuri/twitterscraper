@@ -1,6 +1,8 @@
 package com.tweetscraper.service.implementation;
 
+import com.tweetscraper.entity.TweetImageEntity;
 import com.tweetscraper.entity.UserProfileImageEntity;
+import com.tweetscraper.repository.TweetImageRepository;
 import com.tweetscraper.repository.UserProfileImageRepository;
 import com.tweetscraper.service.ImageService;
 import org.apache.commons.io.FilenameUtils;
@@ -24,6 +26,9 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     UserProfileImageRepository userProfileImageRepository;
 
+    @Autowired
+    TweetImageRepository tweetImageRepository;
+
     private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Override
@@ -37,6 +42,19 @@ public class ImageServiceImpl implements ImageService {
         }
         UserProfileImageEntity imageEntity = UserProfileImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).id(userId).build();
         return userProfileImageRepository.save(imageEntity);
+    }
+
+    @Override
+    public TweetImageEntity downloadAndSaveTweetImage(Long tweetId, String imageUrl) {
+        String imageLocation = null;
+        try {
+            imageLocation = downloadImage(imageUrl);
+        } catch (IOException e) {
+            log.error("Unable to download and store image from {0} for Tweet Id {1}", imageUrl, tweetId);
+            log.error("Stack Trace", e);
+        }
+        TweetImageEntity imageEntity = TweetImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).tweetId(tweetId).build();
+        return tweetImageRepository.save(imageEntity);
     }
 
 

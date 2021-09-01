@@ -1,5 +1,7 @@
 package com.tweetscraper.repository;
 
+import com.tweetscraper.entity.TweetImageEntity;
+import com.tweetscraper.entity.TweetImageId;
 import com.tweetscraper.entity.UserProfileImageEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,14 +20,13 @@ import static org.junit.Assert.assertTrue;
 @DataJpaTest
 @Sql
 @Transactional
-public class UserProfileImageRepositoryTest {
-
+public class TweetImageRepositoryTest {
     @Autowired
-    private UserProfileImageRepository repository;
+    private TweetImageRepository repository;
 
     @Test
     public void fetchUserProfileImage() {
-        Optional<UserProfileImageEntity> entity = repository.findById(11348282L);
+        Optional<TweetImageEntity> entity = repository.findById(TweetImageId.builder().tweetId(11348282L).imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg").build());
         assertTrue(entity.isPresent());
         entity.ifPresent(it -> {
             assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getImageUrl());
@@ -35,8 +36,8 @@ public class UserProfileImageRepositoryTest {
 
     @Test
     public void saveUserProfileImage() {
-        UserProfileImageEntity imageEntity = UserProfileImageEntity.builder()
-                .id(21348282L)
+        TweetImageEntity imageEntity = TweetImageEntity.builder()
+                .tweetId(21348282L)
                 .imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
                 .imageLocation("C://temp/nasalogo_twitter_normal.jpg")
                 .build();
@@ -44,28 +45,27 @@ public class UserProfileImageRepositoryTest {
         repository.save(imageEntity);
 
 
-        Optional<UserProfileImageEntity> _imageEntity = repository.findById(21348282L);
+        Optional<TweetImageEntity> _imageEntity = repository.findById(TweetImageId.builder().tweetId(21348282L).imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg").build());
         assertTrue(_imageEntity.isPresent());
         _imageEntity.ifPresent(it -> {
-            assertEquals(21348282L, it.getId().longValue());
+            assertEquals(21348282L, it.getTweetId().longValue());
             assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getImageUrl());
             assertEquals("C://temp/nasalogo_twitter_normal.jpg", it.getImageLocation());
         });
 
-        UserProfileImageEntity updatedImageEntity = UserProfileImageEntity.builder()
-                .id(21348282L)
-                .imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.png")
+        TweetImageEntity updatedImageEntity = TweetImageEntity.builder()
+                .tweetId(21348282L)
+                .imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
                 .imageLocation("C://temp/nasalogo_twitter_normal.png")
                 .build();
         repository.save(updatedImageEntity);
 
-        Optional<UserProfileImageEntity> _updatedImageEntity = repository.findById(21348282L);
+        Optional<TweetImageEntity> _updatedImageEntity = repository.findById(TweetImageId.builder().tweetId(21348282L).imageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg").build());
         assertTrue(_updatedImageEntity.isPresent());
         _updatedImageEntity.ifPresent(it -> {
-            assertEquals(21348282L, it.getId().longValue());
-            assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.png", it.getImageUrl());
+            assertEquals(21348282L, it.getTweetId().longValue());
+            assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getImageUrl());
             assertEquals("C://temp/nasalogo_twitter_normal.png", it.getImageLocation());
         });
     }
-
 }
