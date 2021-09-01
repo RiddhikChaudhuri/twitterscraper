@@ -2,6 +2,8 @@ package com.tweetscraper.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +19,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "image")
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ImageEntity {
 
     @Id

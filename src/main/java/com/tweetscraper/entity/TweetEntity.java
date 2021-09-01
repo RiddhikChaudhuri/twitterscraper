@@ -18,10 +18,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "tweet")
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
 @NoArgsConstructor
 @Builder
 @Data
