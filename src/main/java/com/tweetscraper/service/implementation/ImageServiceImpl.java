@@ -1,7 +1,7 @@
 package com.tweetscraper.service.implementation;
 
-import com.tweetscraper.entity.ImageEntity;
-import com.tweetscraper.repository.ImageRepository;
+import com.tweetscraper.entity.UserProfileImageEntity;
+import com.tweetscraper.repository.UserProfileImageRepository;
 import com.tweetscraper.service.ImageService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -20,28 +20,30 @@ public class ImageServiceImpl implements ImageService {
 
     @Value("${image.directory}")
     private String imageDirectory;
+
     @Autowired
-    ImageRepository imageRepository;
+    UserProfileImageRepository userProfileImageRepository;
 
     private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Override
-    public ImageEntity downloadAndSave(Long userId, String imageUrl) {
+    public UserProfileImageEntity downloadAndSaveUserProfileImage(Long userId, String imageUrl) {
+        String imageLocation = null;
         try {
-            URL url = new URL(imageUrl);
-            File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
-            ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
-            ImageEntity imageEntity = new ImageEntity();
-            imageEntity.setImageUrl(imageUrl);
-            imageEntity.setImageLocation(file.getPath());
-            imageEntity.setUserId(userId);
-
-            return imageRepository.save(imageEntity);
-
+            imageLocation = downloadImage(imageUrl);
         } catch (IOException e) {
             log.error("Unable to download and store image from {0} for User Id {1}", imageUrl, userId);
             log.error("Stack Trace", e);
         }
-        return null;
+        UserProfileImageEntity imageEntity = UserProfileImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).id(userId).build();
+        return userProfileImageRepository.save(imageEntity);
+    }
+
+
+    private String downloadImage(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
+        ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
+        return file.getPath();
     }
 }

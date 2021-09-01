@@ -1,7 +1,7 @@
 package com.tweetscraper.service;
 
-import com.tweetscraper.entity.ImageEntity;
+import com.tweetscraper.entity.UserProfileImageEntity;
 
 public interface ImageService {
-    ImageEntity downloadAndSave(Long userId, String imageUrl);
+    UserProfileImageEntity downloadAndSaveUserProfileImage(Long userId, String imageUrl);
 }

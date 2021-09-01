@@ -72,7 +72,7 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 			TwitterProfile twitterProfile = tweet.getUser();
 			TwitterUserEntity twitterUserEntity = getTwitterUserEntity(twitterProfile);
 			twitterUserRepository.save(twitterUserEntity);
-			imageService.downloadAndSave(twitterProfile.getId(), twitterProfile.getProfileImageUrl());
+			imageService.downloadAndSaveUserProfileImage(twitterProfile.getId(), twitterProfile.getProfileImageUrl());
 		});
 	}
 
