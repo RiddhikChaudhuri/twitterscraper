@@ -32,20 +32,20 @@ The content shall include:
 - Number of followers
 - All recent tweets made in the channel including re-tweets.
   Each tweet shall include:
-- ID of tweet
-- Date of tweet
-- Name of tweeter
-- Link of tweeter
-- Image data (Base64) of tweeter's profile image
-- Tweet text and image data (Base64)
+- ~~ID of tweet~~
+- ~~Date of tweet~~
+- ~~Name of tweeter~~
+- ~~Link of tweeter~~
+- ~~Image data (Base64) of tweeter's profile image~~
+- ~~Tweet text and image data (Base64)~~
 - Number of comments
-- Number of re-tweets
-- Number of likes
-- Link to tweet
-- Name of original tweeter (for re-tweets)
-- Link to original tweeter (for re-tweets)
-- Date of original tweet (for re-tweets)
-- Text of original tweet (for re-tweets)
+- ~~Number of re-tweets~~
+- ~~Number of likes~~
+- ~~Link to tweet~~
+- ~~Name of original tweeter (for re-tweets)~~
+- ~~Link to original tweeter (for re-tweets)~~
+- ~~Date of original tweet (for re-tweets)~~
+- ~~Text of original tweet (for re-tweets)~~
 
 The project should be written in Java using Spring boot and write its data to a MySQL database.
 The data should use the official Twitter API to obtain the data and you need to have your own API key and test on your own channel proving to use that it work.
