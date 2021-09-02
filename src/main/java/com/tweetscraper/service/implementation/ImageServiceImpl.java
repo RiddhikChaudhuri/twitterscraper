@@ -1,6 +1,7 @@
 package com.tweetscraper.service.implementation;
 
 import com.tweetscraper.entity.TweetImageEntity;
+import com.tweetscraper.entity.TwitterUserEntity;
 import com.tweetscraper.entity.UserProfileImageEntity;
 import com.tweetscraper.repository.TweetImageRepository;
 import com.tweetscraper.repository.UserProfileImageRepository;
@@ -16,6 +17,9 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -42,6 +46,48 @@ public class ImageServiceImpl implements ImageService {
         }
         UserProfileImageEntity imageEntity = UserProfileImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).id(userId).build();
         return userProfileImageRepository.save(imageEntity);
+    }
+
+    @Override
+    public void downloadAndSaveUserProfileImages(Set<TwitterUserEntity> twitterUserEntities) {
+
+        Set<UserProfileImageEntity> userProfileImageEntities = twitterUserEntities.stream().map(it -> UserProfileImageEntity.builder().id(it.getId()).imageUrl(it.getProfileImageUrl()).build()).collect(Collectors.toSet());
+
+        Set<UserProfileImageEntity> _userProfileImageEntities = userProfileImageEntities.stream().map(it -> {
+                    String imageLocation = null;
+                    try {
+                        imageLocation = downloadImage(it.getImageUrl());
+                    } catch (IOException e) {
+                        log.error("Unable to download and store image from {0} for User Id {1}", it.getImageUrl(), it.getId());
+                        log.error("Stack Trace", e);
+                    } finally {
+                        it.setImageLocation(imageLocation);
+                    }
+                    return it;
+                }
+        ).collect(Collectors.toSet());
+
+        userProfileImageRepository.saveAll(_userProfileImageEntities);
+    }
+
+    @Override
+    public void downloadAndSaveTweetImages(Set<TweetImageEntity> tweetImageEntities) {
+        Set<TweetImageEntity> _tweetImageEntities = tweetImageEntities.stream().map(it -> {
+                    String imageLocation = null;
+                    try {
+                        imageLocation = downloadImage(it.getImageUrl());
+                    } catch (IOException e) {
+                        log.error("Unable to download and store image from {0} for Tweet Id {1}", it.getImageUrl(), it.getTweetId());
+                        log.error("Stack Trace", e);
+                    } finally {
+                        it.setImageLocation(imageLocation);
+                    }
+                    return it;
+                }
+
+        ).collect(Collectors.toSet());
+
+        tweetImageRepository.saveAll(_tweetImageEntities);
     }
 
     @Override

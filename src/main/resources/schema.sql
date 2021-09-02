@@ -18,22 +18,27 @@ CREATE TABLE IF NOT EXISTS `USER_PROFILE_IMAGE` (
 );
 
 CREATE TABLE IF NOT EXISTS `TWEET_IMAGE` (
-    TWEET_ID BIGINT(255),
-	IMAGE_URL VARCHAR(1200),
+    TWEET_ID BIGINT(10),
+	IMAGE_URL VARCHAR(500),
 	IMAGE_LOCATION TEXT,
     PRIMARY KEY (TWEET_ID, IMAGE_URL)
 );
 
-
 CREATE TABLE IF NOT EXISTS `TWEET` (
-    ID INTEGER AUTO_INCREMENT,
+	ID BIGINT(255),
 	TEXT TEXT,
-	TWEET_ID BIGINT(255),
+	link text,
 	LANG VARCHAR(255),
-	IMAGE_URL TEXT,
-	IMAGE_LOCATION TEXT,
-	SCREEN_NAME VARCHAR(500),
 	RETWEET_COUNT INTEGER,
 	FAVORITE_COUNT INTEGER,
+	retweeted boolean,
+	favorited boolean,
+	twitter_user_id BIGINT(255),
+	twitter_user_name TEXT,
+	created_at datetime,
+	original_twitter_name text,
+	original_link text,
+	original_created_at datetime,
+	original_text text,
 	PRIMARY KEY (id)
 );
