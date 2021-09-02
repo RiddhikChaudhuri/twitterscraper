@@ -2,7 +2,7 @@ package com.tweetscraper.repository;
 
 
 import com.tweetscraper.entity.TweetEntity;
-import com.tweetscraper.entity.TwitterUserEntity;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@Sql
 @Transactional
 public class TweetRepositoryTest {
 
@@ -29,7 +27,7 @@ public class TweetRepositoryTest {
     private TweetRepository repository;
 
     @Test
-    public void saveTweet(){
+    public void saveTweet() {
 
         TweetEntity entity = TweetEntity.builder()
                 .id(967824267948773377L)
@@ -39,7 +37,7 @@ public class TweetRepositoryTest {
                 .retweetCount(1)
                 .favoriteCount(10)
                 .retweeted(true)
-                .favorited(true)
+                .favorited(false)
                 .twitterUserId(11348282L)
                 .twitterUserName("NASA")
                 .createdAt(new Date())
@@ -50,6 +48,16 @@ public class TweetRepositoryTest {
                 .build();
 
         repository.save(entity);
+
+        Optional<TweetEntity> _entity = repository.findById(967824267948773377L);
+
+        Assert.assertTrue(_entity.isPresent());
+        _entity.ifPresent(it -> {
+                    assertEquals(967824267948773377L, it.getId().longValue());
+                    assertEquals(true, it.getRetweeted());
+                    assertEquals(false, it.getFavorited());
+                }
+        );
 
     }
 }

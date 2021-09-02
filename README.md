@@ -55,3 +55,7 @@ The java service will run on Linux and no use of JNI is allowed.
 
 Twitter Api to be used: 
 https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets
+
+-------------------
+
+To Test : http://localhost:8080/test-tweet 

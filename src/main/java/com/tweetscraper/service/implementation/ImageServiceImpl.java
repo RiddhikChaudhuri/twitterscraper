@@ -17,7 +17,8 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,14 +36,14 @@ public class ImageServiceImpl implements ImageService {
 
     private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
+    public static final String[] SUPPORTED_IMAGE_FILE_VALUES = new String[]{"JPEG", "PNG", "BMP", "WEBMP", "GIF"};
+    public static final Set<String> SUPPORTED_IMAGE_FILES = new HashSet<>(Arrays.asList(SUPPORTED_IMAGE_FILE_VALUES));
+
     @Override
     public UserProfileImageEntity downloadAndSaveUserProfileImage(Long userId, String imageUrl) {
-        String imageLocation = null;
-        try {
-            imageLocation = downloadImage(imageUrl);
-        } catch (IOException e) {
-            log.error("Unable to download and store image from {0} for User Id {1}", imageUrl, userId);
-            log.error("Stack Trace", e);
+        String imageLocation = downloadImage(imageUrl);
+        if (imageLocation == null) {
+            log.error("Unable to download and store user profile image from " + imageUrl + "for User Id " + userId);
         }
         UserProfileImageEntity imageEntity = UserProfileImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).id(userId).build();
         return userProfileImageRepository.save(imageEntity);
@@ -51,18 +52,17 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void downloadAndSaveUserProfileImages(Set<TwitterUserEntity> twitterUserEntities) {
 
-        Set<UserProfileImageEntity> userProfileImageEntities = twitterUserEntities.stream().map(it -> UserProfileImageEntity.builder().id(it.getId()).imageUrl(it.getProfileImageUrl()).build()).collect(Collectors.toSet());
+        Set<UserProfileImageEntity> userProfileImageEntities = twitterUserEntities.stream()
+                .filter(it -> (it.getProfileImageUrl() != null && SUPPORTED_IMAGE_FILES.contains(FilenameUtils.getExtension(it.getProfileImageUrl().toUpperCase()))))
+                .map(it -> UserProfileImageEntity.builder().id(it.getId()).imageUrl(it.getProfileImageUrl()).build()).collect(Collectors.toSet());
 
         Set<UserProfileImageEntity> _userProfileImageEntities = userProfileImageEntities.stream().map(it -> {
-                    String imageLocation = null;
-                    try {
-                        imageLocation = downloadImage(it.getImageUrl());
-                    } catch (IOException e) {
-                        log.error("Unable to download and store image from {0} for User Id {1}", it.getImageUrl(), it.getId());
-                        log.error("Stack Trace", e);
-                    } finally {
-                        it.setImageLocation(imageLocation);
+                    String imageLocation = downloadImage(it.getImageUrl());
+                    if (imageLocation == null) {
+                        log.error("Unable to download and store user profile image from " + it.getImageUrl() + " for User Id " + it.getId());
                     }
+
+                    it.setImageLocation(imageLocation);
                     return it;
                 }
         ).collect(Collectors.toSet());
@@ -72,42 +72,49 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void downloadAndSaveTweetImages(Set<TweetImageEntity> tweetImageEntities) {
-        Set<TweetImageEntity> _tweetImageEntities = tweetImageEntities.stream().map(it -> {
-                    String imageLocation = null;
-                    try {
-                        imageLocation = downloadImage(it.getImageUrl());
-                    } catch (IOException e) {
-                        log.error("Unable to download and store image from {0} for Tweet Id {1}", it.getImageUrl(), it.getTweetId());
-                        log.error("Stack Trace", e);
-                    } finally {
-                        it.setImageLocation(imageLocation);
-                    }
-                    return it;
-                }
 
-        ).collect(Collectors.toSet());
+        Set<TweetImageEntity> _tweetImageEntities = tweetImageEntities.stream()
+                .filter(it -> (it.getImageUrl() != null && SUPPORTED_IMAGE_FILES.contains(FilenameUtils.getExtension(it.getImageUrl().toUpperCase()))))
+                .map(it -> {
+                            String imageLocation = downloadImage(it.getImageUrl());
+                            if (imageLocation == null) {
+                                log.error("Unable to download and store tweet image from " + it.getImageUrl() + " for Tweet Id " + it.getTweetId());
+                            }
+
+                            it.setImageLocation(imageLocation);
+                            return it;
+                        }
+
+                ).collect(Collectors.toSet());
 
         tweetImageRepository.saveAll(_tweetImageEntities);
     }
 
     @Override
     public TweetImageEntity downloadAndSaveTweetImage(Long tweetId, String imageUrl) {
-        String imageLocation = null;
-        try {
-            imageLocation = downloadImage(imageUrl);
-        } catch (IOException e) {
-            log.error("Unable to download and store image from {0} for Tweet Id {1}", imageUrl, tweetId);
-            log.error("Stack Trace", e);
+        String imageLocation = downloadImage(imageUrl);
+        if (imageLocation == null) {
+            log.error("Unable to download and store tweet image from " + imageUrl + " for Tweet Id " + tweetId);
         }
+
         TweetImageEntity imageEntity = TweetImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).tweetId(tweetId).build();
         return tweetImageRepository.save(imageEntity);
     }
 
 
-    private String downloadImage(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
-        ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
-        return file.getPath();
+    private String downloadImage(String imageUrl) {
+        if (imageUrl != null) {
+            log.info("Downloading the image " + imageUrl);
+            try {
+                URL url = new URL(imageUrl);
+                File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
+                ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
+                return file.getPath();
+            } catch (IOException e) {
+                log.error("Unable to download and store image from " + imageUrl);
+                //log.error("Stack Trace", e);
+            }
+        }
+        return null;
     }
 }
