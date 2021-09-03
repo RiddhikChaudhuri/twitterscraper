@@ -32,13 +32,4 @@ public class TweetSearchParameterEntity implements Serializable {
 
     @Column(name = "SINCE_ID")
     private Long sinceId;
-
-    @Column(name = "RESULT_TYPE")
-    private String resultType;
-
-    @Column(name = "INCLUDE_ENTITIES")
-    private Boolean includeEntities;
-
-    @Column(name = "UNTIL")
-    private Date until;
 }

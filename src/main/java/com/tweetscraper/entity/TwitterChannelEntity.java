@@ -17,19 +17,27 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "TWITTER_CHANNEL")
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class TwitterChannelEntity implements Serializable {
 
     @Id
-    @Column(name = "SCREEN_NAME")
-    @EqualsAndHashCode.Include
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "screen_name")
     private String screenName;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
+    @Column(name = "url")
+    private String url;
 
     @Column(name = "FOLLOWER_COUNT")
     private Long followerCount;

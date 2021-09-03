@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.social.twitter.api.AccountSettings;
-import org.springframework.social.twitter.api.FriendOperations;
 import org.springframework.social.twitter.api.SearchOperations;
 import org.springframework.social.twitter.api.SearchParameters;
 import org.springframework.social.twitter.api.SearchResults;
@@ -25,6 +23,8 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.social.twitter.api.SearchParameters.ResultType.MIXED;
 
 @Service
 public class TweetScraperServiceImpl implements TweetScraperService {
@@ -56,52 +56,59 @@ public class TweetScraperServiceImpl implements TweetScraperService {
         try {
             Twitter twitter = twitterTemplateCreator.getTwitterTemplate(accountName);
 
-
             TwitterProfile channelProfile = twitter.userOperations().getUserProfile(twitterChannel);
             twitterChannelRepository.save(TwitterChannelEntity.builder()
+                    .id(channelProfile.getId())
+                    .name(channelProfile.getName())
                     .screenName(channelProfile.getScreenName())
+                    .profileImageUrl(channelProfile.getProfileImageUrl())
+                    .url(channelProfile.getUrl())
                     .followerCount(Long.valueOf(channelProfile.getFollowersCount()))
                     .build()
             );
-/*
-            AccountSettings accountSettings = twitter.userOperations().getAccountSettings();
-
-            FriendOperations friendOperations = twitter.friendOperations();
-
-            Long cursor = -1L;
-            Long followerCount = 0L;
-
-            do {
-                CursoredList<Long> followerIdsInCursor = friendOperations.getFollowerIdsInCursor(twitterChannel, cursor);
-                followerCount = followerCount + followerIdsInCursor.size();
-                cursor = followerIdsInCursor.getNextCursor();
-            } while (cursor != 0);
-
-            twitterChannelRepository.save(TwitterChannelEntity.builder().screenName(twitterChannel).followerCount(followerCount).build());
-*/
 
             SearchOperations searchOperations = twitter.searchOperations();
 
             boolean isLastPage = false;
 
-            //SearchParameters searchParameters = getSearchParameter(tweetSearchParameterRepository.findById(twitterChannel));
+            Optional<TweetSearchParameterEntity> searchParameterEntity = tweetSearchParameterRepository.findById(twitterChannel);
+//            SearchParameters searchParameters = getSearchParameter(searchParameterEntity);
 
-            SearchParameters searchParameters = new SearchParameters(twitterChannel).sinceId(-1);
 
 
-            while (!isLastPage) {
-                log.info("## Search Param Query = " + searchParameters.getQuery() + " ; sinceId = " + searchParameters.getSinceId());
-                SearchResults searchResults = searchOperations.search(searchParameters);
-                List<Tweet> tweets = searchResults.getTweets();
+            String query = twitterChannel;
 
-                if (tweets != null && !tweets.isEmpty()) {
-                    tweetProcessingService.processTweets(tweets);
-                }
+            Long maxId = searchParameterEntity.isPresent() ? searchParameterEntity.get().getSinceId() : -1L;
 
-                isLastPage = searchResults.isLastPage();
-                log.info("## Search Param Query = " + searchParameters.getQuery() + " ; sinceId = " + searchParameters.getSinceId() + "; isLastPage = " + isLastPage);
-                searchParameters.sinceId(searchResults.getSearchMetadata().getMaxId());
+
+            SearchParameters searchParameters = new SearchParameters(query)
+                    .count(100)
+                    .until(new Date())
+                    //.sinceId(maxId)
+                    .resultType(MIXED)
+                    .includeEntities(true);
+
+
+
+            log.info("## Search Param Query = " + searchParameters.getQuery() + " ; sinceId = " + searchParameters.getSinceId());
+            // search(String query, int pageSize, long sinceId, long maxId);
+            SearchResults searchResults = searchOperations.search(searchParameters);
+            List<Tweet> tweets = searchResults.getTweets();
+
+            if (tweets != null && !tweets.isEmpty()) {
+                tweetProcessingService.processTweets(tweets);
             }
+
+            isLastPage = searchResults.isLastPage();
+            log.info("## Search Param Query = " + searchParameters.getQuery()
+                    + " ; sinceId = " + searchResults.getSearchMetadata().getSinceId()
+                    + " ; maxId = " + searchResults.getSearchMetadata().getMaxId()
+                    + "; isLastPage = " + isLastPage
+            );
+            TweetSearchParameterEntity tweetSearchParameterEntity = convertToTweetSearchParameterEntity(new SearchParameters(twitterChannel)
+                    .sinceId(searchResults.getSearchMetadata().getMaxId())
+                    .count(100));
+            tweetSearchParameterRepository.save(tweetSearchParameterEntity);
         } catch (Exception exception) {
             log.error("Exception occurred while fetching data from the Twitter Api.", exception);
         }
@@ -113,31 +120,26 @@ public class TweetScraperServiceImpl implements TweetScraperService {
         return TweetSearchParameterEntity.builder()
                 .query(searchParameters.getQuery())
                 .sinceId(searchParameters.getSinceId())
-                .resultType(searchParameters.getResultType().name())
-                .includeEntities(searchParameters.isIncludeEntities())
-                .until(searchParameters.getUntil())
                 .build();
 
     }
 
     private SearchParameters getSearchParameter(Optional<TweetSearchParameterEntity> tweetSearchParameterEntity) {
-        SearchParameters searchParameters = null;
 
         if (tweetSearchParameterEntity.isPresent()) {
             TweetSearchParameterEntity entity = tweetSearchParameterEntity.get();
-            searchParameters = new SearchParameters(entity.getQuery())
+            return new SearchParameters(entity.getQuery())
                     .sinceId(entity.getSinceId())
-                    .resultType(SearchParameters.ResultType.valueOf(entity.getResultType()))
-                    .includeEntities(entity.getIncludeEntities())
-                    .until(new Date());
-        } else {
-            searchParameters = new SearchParameters(twitterChannel)
-                    .sinceId(-1)
-                    .resultType(SearchParameters.ResultType.MIXED)
+                    .resultType(MIXED)
                     .includeEntities(true)
-                    .until(new Date());
+                    .count(100);
+        } else {
+            return new SearchParameters(twitterChannel)
+                    .sinceId(-1)
+                    .resultType(MIXED)
+                    .includeEntities(true)
+                    .count(100);
         }
-        return searchParameters;
     }
 
 

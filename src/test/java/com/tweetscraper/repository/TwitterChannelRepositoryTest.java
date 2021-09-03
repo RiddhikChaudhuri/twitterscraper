@@ -23,13 +23,15 @@ public class TwitterChannelRepositoryTest {
     @Test
     public void saveTwitterChannelInformation(){
         TwitterChannelEntity entity = TwitterChannelEntity.builder()
+                .id(1L)
+                .name("Twitter")
                 .screenName("Twitter")
                 .followerCount(100L)
                 .build();
 
         repository.save(entity);
 
-        Optional<TwitterChannelEntity> _entity = repository.findById("Twitter");
+        Optional<TwitterChannelEntity> _entity = repository.findById(1L);
 
         Assert.assertTrue(_entity.isPresent());
         _entity.ifPresent(it->{
@@ -44,7 +46,7 @@ public class TwitterChannelRepositoryTest {
 
         repository.save(updatedEntity);
 
-        Optional<TwitterChannelEntity> _updatedEntity = repository.findById("Twitter");
+        Optional<TwitterChannelEntity> _updatedEntity = repository.findById(1L);
 
         Assert.assertTrue(_updatedEntity.isPresent());
         _entity.ifPresent(it->{
