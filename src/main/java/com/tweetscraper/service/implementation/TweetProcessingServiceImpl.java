@@ -86,8 +86,6 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
 
         });
 
-        logger.info("## Tweet Id ## " + tweetEntities.stream().map(it -> it.getId()).collect(Collectors.toSet()).stream().sorted());
-
         // Save Tweets
         tweetRepository.saveAll(tweetEntities);
 

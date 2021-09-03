@@ -103,7 +103,7 @@ public class TweetScraperServiceImpl implements TweetScraperService {
                 searchParameters.sinceId(searchResults.getSearchMetadata().getMaxId());
             }
         } catch (Exception exception) {
-            log.error("Exception occurred while fetching data from the Twitter Api.");
+            log.error("Exception occurred while fetching data from the Twitter Api.", exception);
         }
 
         log.info("#### TWEET SYNC COMPLETED #### ");
