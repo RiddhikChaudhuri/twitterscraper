@@ -44,9 +44,6 @@ public class TwitterUserEntity implements Serializable {
 	@Column(name = "profile_image_url")
 	private String profileImageUrl;
 
-	@Column(name = "profile_image_url_https")
-	private String profileImageUrlHttps;
-
 	@Column(name = "url")
 	private String url;
 }

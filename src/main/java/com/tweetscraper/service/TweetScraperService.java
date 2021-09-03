@@ -8,5 +8,4 @@ public interface TweetScraperService {
 
     public void findTweets(String accountName);
 
-    void processTweets(List<Tweet> tweets);
 }

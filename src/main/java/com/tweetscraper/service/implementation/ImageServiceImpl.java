@@ -110,7 +110,7 @@ public class ImageServiceImpl implements ImageService {
                 File file = new File(imageDirectory, FilenameUtils.getName(url.getPath()));
                 ImageIO.write(ImageIO.read(url), FilenameUtils.getExtension(url.getPath()), file);
                 return file.getPath();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Unable to download and store image from " + imageUrl);
                 //log.error("Stack Trace", e);
             }

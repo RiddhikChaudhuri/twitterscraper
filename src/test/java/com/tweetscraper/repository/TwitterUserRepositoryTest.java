@@ -34,7 +34,6 @@ public class TwitterUserRepositoryTest {
                     assertEquals("NASA", it.getScreenName());
                     assertEquals("https://t.co/TcEE6NS8nD", it.getUrl());
                     assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrl());
-                    assertEquals("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrlHttps());
                 }
         );
     }
@@ -45,7 +44,6 @@ public class TwitterUserRepositoryTest {
 
         TwitterUserEntity entity = TwitterUserEntity.builder()
                 .name("NASA").screenName("NASA").id(11348283L).profileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
-                .profileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
                 .url("https://t.co/TcEE6NS8nD")
                 .build();
         repository.save(entity);
@@ -58,14 +56,12 @@ public class TwitterUserRepositoryTest {
                     assertEquals("NASA", it.getScreenName());
                     assertEquals("https://t.co/TcEE6NS8nD", it.getUrl());
                     assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrl());
-                    assertEquals("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrlHttps());
                 }
         );
 
 
         TwitterUserEntity updatedEntity = TwitterUserEntity.builder()
                 .name("NASA Updated").screenName("NASA Updated").id(11348283L).profileImageUrl("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
-                .profileImageUrlHttps("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg")
                 .url("https://t.co/TcEE6NS8nD")
                 .build();
         repository.save(updatedEntity);
@@ -77,7 +73,6 @@ public class TwitterUserRepositoryTest {
                     assertEquals("NASA Updated", it.getScreenName());
                     assertEquals("https://t.co/TcEE6NS8nD", it.getUrl());
                     assertEquals("http://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrl());
-                    assertEquals("https://pbs.twimg.com/profile_images/188302352/nasalogo_twitter_normal.jpg", it.getProfileImageUrlHttps());
                 }
         );
 
