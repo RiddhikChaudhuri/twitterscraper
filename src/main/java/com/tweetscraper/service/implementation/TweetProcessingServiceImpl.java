@@ -4,7 +4,6 @@ import com.tweetscraper.entity.TweetEntity;
 import com.tweetscraper.entity.TweetImageEntity;
 import com.tweetscraper.entity.TwitterUserEntity;
 import com.tweetscraper.repository.TweetRepository;
-import com.tweetscraper.repository.TwitterChannelRepository;
 import com.tweetscraper.repository.TwitterUserRepository;
 import com.tweetscraper.service.ImageService;
 import com.tweetscraper.service.TweetProcessingService;
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class TweetProcessingServiceImpl implements TweetProcessingService {
@@ -69,16 +67,7 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
                 tweetEntity.setOriginalText(originalTweet.getText());
             }
 
-            if (!Objects.isNull(tweet.getEntities().getMedia())) {
-                List<MediaEntity> mediaEntities = tweet.getEntities().getMedia();
-                // extracting images information
-                for (MediaEntity me : mediaEntities) {
-                    if (me.getType().equals("photo")) {
-                        tweetImageEntities.add(TweetImageEntity.builder().tweetId(tweet.getId()).imageUrl(mediaEntities.get(0).getMediaUrl()).build());
-                        break;
-                    }
-                }
-            }
+            tweetImageEntities.addAll(extractTweetedImages(tweet));
 
             tweetEntities.add(tweetEntity);
 
@@ -98,6 +87,20 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
         // Download & Save Twitter User Profile Images
         imageService.downloadAndSaveUserProfileImages(twitterUserEntities);
 
+    }
+
+    private Set<TweetImageEntity> extractTweetedImages(Tweet tweet) {
+        Set<TweetImageEntity> images = new HashSet<>();
+        if (!Objects.isNull(tweet.getEntities().getMedia())) {
+            List<MediaEntity> mediaEntities = tweet.getEntities().getMedia();
+            // extracting images information
+            for (MediaEntity me : mediaEntities) {
+                if (me.getType().equals("photo")) {
+                    images.add(TweetImageEntity.builder().tweetId(tweet.getId()).imageUrl(mediaEntities.get(0).getMediaUrl()).build());
+                }
+            }
+        }
+        return images;
     }
 
     private String getTweetLink(Tweet tweet) {
