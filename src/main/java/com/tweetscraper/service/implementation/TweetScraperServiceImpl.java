@@ -32,10 +32,6 @@ public class TweetScraperServiceImpl implements TweetScraperService {
     @Autowired
     private TwitterTemplateCreator twitterTemplateCreator;
 
-
-    @Autowired
-    private TwitterChannelRepository twitterChannelRepository;
-
     @Autowired
     private TweetSearchParameterRepository tweetSearchParameterRepository;
 
@@ -51,21 +47,12 @@ public class TweetScraperServiceImpl implements TweetScraperService {
     private static final Logger log = LoggerFactory.getLogger(TweetScraperServiceImpl.class);
 
     @Override
-    @Transactional
     public void findTweets(String accountName) {
         try {
             Twitter twitter = twitterTemplateCreator.getTwitterTemplate(accountName);
 
             TwitterProfile channelProfile = twitter.userOperations().getUserProfile(twitterChannel);
-            twitterChannelRepository.save(TwitterChannelEntity.builder()
-                    .id(channelProfile.getId())
-                    .name(channelProfile.getName())
-                    .screenName(channelProfile.getScreenName())
-                    .profileImageUrl(channelProfile.getProfileImageUrl())
-                    .url(channelProfile.getUrl())
-                    .followerCount(Long.valueOf(channelProfile.getFollowersCount()))
-                    .build()
-            );
+            tweetProcessingService.processChannelInformation(channelProfile);
 
             SearchOperations searchOperations = twitter.searchOperations();
 
@@ -73,8 +60,6 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
             Optional<TweetSearchParameterEntity> searchParameterEntity = tweetSearchParameterRepository.findById(twitterChannel);
 //            SearchParameters searchParameters = getSearchParameter(searchParameterEntity);
-
-
 
             String query = twitterChannel;
 

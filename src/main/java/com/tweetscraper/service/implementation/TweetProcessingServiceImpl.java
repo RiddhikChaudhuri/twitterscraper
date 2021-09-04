@@ -2,8 +2,10 @@ package com.tweetscraper.service.implementation;
 
 import com.tweetscraper.entity.TweetEntity;
 import com.tweetscraper.entity.TweetImageEntity;
+import com.tweetscraper.entity.TwitterChannelEntity;
 import com.tweetscraper.entity.TwitterUserEntity;
 import com.tweetscraper.repository.TweetRepository;
+import com.tweetscraper.repository.TwitterChannelRepository;
 import com.tweetscraper.repository.TwitterUserRepository;
 import com.tweetscraper.service.ImageService;
 import com.tweetscraper.service.TweetProcessingService;
@@ -33,6 +35,8 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
     @Autowired
     private TweetRepository tweetRepository;
 
+    @Autowired
+    private TwitterChannelRepository twitterChannelRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(TweetProcessingServiceImpl.class);
 
@@ -87,6 +91,20 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
         // Download & Save Twitter User Profile Images
         imageService.downloadAndSaveUserProfileImages(twitterUserEntities);
 
+    }
+
+    @Override
+    @Transactional
+    public void processChannelInformation(TwitterProfile channelProfile) {
+        twitterChannelRepository.save(TwitterChannelEntity.builder()
+                .id(channelProfile.getId())
+                .name(channelProfile.getName())
+                .screenName(channelProfile.getScreenName())
+                .profileImageUrl(channelProfile.getProfileImageUrl())
+                .url(channelProfile.getUrl())
+                .followerCount(Long.valueOf(channelProfile.getFollowersCount()))
+                .build()
+        );
     }
 
     private Set<TweetImageEntity> extractTweetedImages(Tweet tweet) {
