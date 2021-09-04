@@ -1,21 +1,14 @@
 package com.tweetscraper.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
@@ -26,52 +19,52 @@ import java.util.Date;
 @AllArgsConstructor
 public class TweetEntity {
 
-	@Id
-	@Column(name = "id")
-	private Long id;
-	
-	@Column(name = "text")
-	private String text;
+    @Id
+    @Column(name = "id")
+    private Long id;
 
-	@Column(name = "link")
-	private String link;
+    @Column(name = "text")
+    private String text;
 
-	@Column(name = "lang")
-	private String lang;
+    @Column(name = "link")
+    private String link;
 
-	@Column(name="retweet_count")
-	private Integer retweetCount;
-	
-	@Column(name="favorite_count")
-	private Integer favoriteCount;
+    @Column(name = "lang")
+    private String lang;
 
-	@Column(name="retweeted")
-	private Boolean retweeted;
+    @Column(name = "retweet_count")
+    private Integer retweetCount;
 
-	@Column(name="favorited")
-	private Boolean favorited;
+    @Column(name = "favorite_count")
+    private Integer favoriteCount;
 
-	@Column(name = "twitter_user_id")
-	private Long twitterUserId;
+    @Column(name = "retweeted")
+    private Boolean retweeted;
 
-	@Column(name = "twitter_user_name")
-	private String twitterUserName;
+    @Column(name = "favorited")
+    private Boolean favorited;
 
-	@Column(name = "created_at")
-	private Date createdAt;
+    @Column(name = "twitter_user_id")
+    private Long twitterUserId;
 
-	// For retweets
+    @Column(name = "twitter_user_name")
+    private String twitterUserName;
 
-	@Column(name = "original_twitter_name")
-	private String originalTwitterName;
+    @Column(name = "created_at")
+    private Date createdAt;
 
-	@Column(name = "original_link")
-	private String originalLink;
+    // For retweets
 
-	@Column(name = "original_created_at")
-	private Date originalCreatedAt;
+    @Column(name = "original_twitter_name")
+    private String originalTwitterName;
 
-	@Column(name = "original_text")
-	private String originalText;
+    @Column(name = "original_link")
+    private String originalLink;
+
+    @Column(name = "original_created_at")
+    private Date originalCreatedAt;
+
+    @Column(name = "original_text")
+    private String originalText;
 
 }

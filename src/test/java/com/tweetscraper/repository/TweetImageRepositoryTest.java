@@ -2,7 +2,6 @@ package com.tweetscraper.repository;
 
 import com.tweetscraper.entity.TweetImageEntity;
 import com.tweetscraper.entity.TweetImageId;
-import com.tweetscraper.entity.UserProfileImageEntity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

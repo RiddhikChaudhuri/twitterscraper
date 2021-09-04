@@ -43,7 +43,7 @@ public class ImageServiceImpl implements ImageService {
     public UserProfileImageEntity downloadAndSaveUserProfileImage(Long userId, String imageUrl) {
         String imageLocation = downloadImage(imageUrl);
         if (imageLocation == null) {
-            log.error("Unable to download and store user profile image from " + imageUrl + "for User Id " + userId);
+//            log.error("Unable to download and store user profile image from " + imageUrl + "for User Id " + userId);
         }
         UserProfileImageEntity imageEntity = UserProfileImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).id(userId).build();
         return userProfileImageRepository.save(imageEntity);
@@ -59,7 +59,7 @@ public class ImageServiceImpl implements ImageService {
         Set<UserProfileImageEntity> _userProfileImageEntities = userProfileImageEntities.stream().map(it -> {
                     String imageLocation = downloadImage(it.getImageUrl());
                     if (imageLocation == null) {
-                        log.error("Unable to download and store user profile image from " + it.getImageUrl() + " for User Id " + it.getId());
+//                        log.error("Unable to download and store user profile image from " + it.getImageUrl() + " for User Id " + it.getId());
                     }
 
                     it.setImageLocation(imageLocation);
@@ -78,7 +78,7 @@ public class ImageServiceImpl implements ImageService {
                 .map(it -> {
                             String imageLocation = downloadImage(it.getImageUrl());
                             if (imageLocation == null) {
-                                log.error("Unable to download and store tweet image from " + it.getImageUrl() + " for Tweet Id " + it.getTweetId());
+//                                log.error("Unable to download and store tweet image from " + it.getImageUrl() + " for Tweet Id " + it.getTweetId());
                             }
 
                             it.setImageLocation(imageLocation);
@@ -94,7 +94,7 @@ public class ImageServiceImpl implements ImageService {
     public TweetImageEntity downloadAndSaveTweetImage(Long tweetId, String imageUrl) {
         String imageLocation = downloadImage(imageUrl);
         if (imageLocation == null) {
-            log.error("Unable to download and store tweet image from " + imageUrl + " for Tweet Id " + tweetId);
+//            log.error("Unable to download and store tweet image from " + imageUrl + " for Tweet Id " + tweetId);
         }
 
         TweetImageEntity imageEntity = TweetImageEntity.builder().imageUrl(imageUrl).imageLocation(imageLocation).tweetId(tweetId).build();
@@ -104,7 +104,7 @@ public class ImageServiceImpl implements ImageService {
 
     private String downloadImage(String imageUrl) {
         if (imageUrl != null) {
-            log.debug("Downloading the image " + imageUrl);
+//            log.debug("Downloading the image " + imageUrl);
             try {
                 URL url = new URL(imageUrl);
                 String extension = FilenameUtils.getExtension(url.getPath());
@@ -114,7 +114,7 @@ public class ImageServiceImpl implements ImageService {
                     return file.getPath();
                 }
             } catch (Exception e) {
-                log.error("Unable to download and store image from " + imageUrl);
+//                log.error("Unable to download and store image from " + imageUrl);
                 //log.error("Error occurred while downloading image", e);
             }
         }

@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,7 @@ public class TwitterChannelRepositoryTest {
     private TwitterChannelRepository repository;
 
     @Test
-    public void saveTwitterChannelInformation(){
+    public void saveTwitterChannelInformation() {
         TwitterChannelEntity entity = TwitterChannelEntity.builder()
                 .id(1L)
                 .name("Twitter")
@@ -34,7 +33,7 @@ public class TwitterChannelRepositoryTest {
         Optional<TwitterChannelEntity> _entity = repository.findById(1L);
 
         Assert.assertTrue(_entity.isPresent());
-        _entity.ifPresent(it->{
+        _entity.ifPresent(it -> {
             Assert.assertEquals(100L, it.getFollowerCount().longValue());
             Assert.assertEquals("Twitter", it.getScreenName());
         });
@@ -49,7 +48,7 @@ public class TwitterChannelRepositoryTest {
         Optional<TwitterChannelEntity> _updatedEntity = repository.findById(1L);
 
         Assert.assertTrue(_updatedEntity.isPresent());
-        _entity.ifPresent(it->{
+        _entity.ifPresent(it -> {
             Assert.assertEquals(200L, it.getFollowerCount().longValue());
             Assert.assertEquals("Twitter", it.getScreenName());
         });

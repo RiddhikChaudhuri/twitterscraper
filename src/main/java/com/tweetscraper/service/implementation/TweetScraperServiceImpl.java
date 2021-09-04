@@ -61,7 +61,7 @@ public class TweetScraperServiceImpl implements TweetScraperService {
                 List<Tweet> tweets = searchResults.getTweets();
 
                 if (tweets != null && !tweets.isEmpty()) {
-                    log.info("## Number of tweets in iteration # (" + iteration + ")" + " : sinceId = " + sinceId);
+                    log.info("## Tweet count in iteration # (" + iteration + ") = " + tweets.size());
                     tweetProcessingService.processTweets(tweets);
                 }
 
@@ -72,7 +72,8 @@ public class TweetScraperServiceImpl implements TweetScraperService {
                         + " ; maxId = " + searchResults.getSearchMetadata().getMaxId()
                         + "; isLastPage = " + searchResults.isLastPage()
                 );
-                log.info("===================================================================");
+                log.info("==============================================================================");
+                iteration++;
             } while (!quitSyncing);
 
         } catch (Exception exception) {

@@ -4,7 +4,6 @@ import com.tweetscraper.entity.TweetImageEntity;
 import com.tweetscraper.entity.TwitterUserEntity;
 import com.tweetscraper.entity.UserProfileImageEntity;
 
-import java.util.List;
 import java.util.Set;
 
 public interface ImageService {
