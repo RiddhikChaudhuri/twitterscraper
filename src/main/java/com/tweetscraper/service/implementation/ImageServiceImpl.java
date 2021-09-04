@@ -33,10 +33,11 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     TweetImageRepository tweetImageRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
+    public static final Set<String> SUPPORTED_IMAGE_FILES = new HashSet<>(
+            Arrays.asList(new String[]{"JPEG", "PNG", "BMP", "WEBMP", "GIF"})
+    );
 
-    public static final String[] SUPPORTED_IMAGE_FILE_VALUES = new String[]{"JPEG", "PNG", "BMP", "WEBMP", "GIF"};
-    public static final Set<String> SUPPORTED_IMAGE_FILES = new HashSet<>(Arrays.asList(SUPPORTED_IMAGE_FILE_VALUES));
+    private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Override
     public UserProfileImageEntity downloadAndSaveUserProfileImage(Long userId, String imageUrl) {
@@ -54,8 +55,6 @@ public class ImageServiceImpl implements ImageService {
         Set<UserProfileImageEntity> userProfileImageEntities = twitterUserEntities.stream()
                 .filter(it -> (it.getProfileImageUrl() != null))
                 .map(it -> UserProfileImageEntity.builder().id(it.getId()).imageUrl(it.getProfileImageUrl()).build()).collect(Collectors.toSet());
-
-        log.info("Number of User Images to be download = " + userProfileImageEntities.size());
 
         Set<UserProfileImageEntity> _userProfileImageEntities = userProfileImageEntities.stream().map(it -> {
                     String imageLocation = downloadImage(it.getImageUrl());
@@ -88,8 +87,6 @@ public class ImageServiceImpl implements ImageService {
 
                 ).collect(Collectors.toSet());
 
-        log.info("Number of Tweet Images to be download = " + _tweetImageEntities.size());
-
         tweetImageRepository.saveAll(_tweetImageEntities);
     }
 
@@ -107,7 +104,7 @@ public class ImageServiceImpl implements ImageService {
 
     private String downloadImage(String imageUrl) {
         if (imageUrl != null) {
-            log.info("Downloading the image " + imageUrl);
+            log.debug("Downloading the image " + imageUrl);
             try {
                 URL url = new URL(imageUrl);
                 String extension = FilenameUtils.getExtension(url.getPath());
@@ -118,7 +115,7 @@ public class ImageServiceImpl implements ImageService {
                 }
             } catch (Exception e) {
                 log.error("Unable to download and store image from " + imageUrl);
-                //log.error("Stack Trace", e);
+                //log.error("Error occurred while downloading image", e);
             }
         }
         return null;

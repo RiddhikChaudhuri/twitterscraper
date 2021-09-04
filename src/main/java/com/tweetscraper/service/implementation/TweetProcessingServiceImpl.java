@@ -43,7 +43,6 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
     @Override
     @Transactional
     public void processTweets(List<Tweet> tweets) {
-        Long tweetCount = 0L;
         Set<TwitterUserEntity> twitterUserEntities = new HashSet<>();
         Set<TweetImageEntity> tweetImageEntities = new HashSet<>();
         Set<TweetEntity> tweetEntities = new HashSet<>();
