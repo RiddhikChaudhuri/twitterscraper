@@ -98,13 +98,13 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
 
     @Override
     @Transactional
-    public void processChannelInformation(TwitterProfile channelProfile) {
+    public void processChannelInformation(User channelProfile) {
         twitterChannelRepository.save(TwitterChannelEntity.builder()
                 .id(channelProfile.getId())
                 .name(channelProfile.getName())
                 .screenName(channelProfile.getScreenName())
-                .profileImageUrl(channelProfile.getProfileImageUrl())
-                .url(channelProfile.getUrl())
+                .profileImageUrl(channelProfile.getProfileImageURL())
+                .url(channelProfile.getURL())
                 .followerCount(Long.valueOf(channelProfile.getFollowersCount()))
                 .build()
         );
