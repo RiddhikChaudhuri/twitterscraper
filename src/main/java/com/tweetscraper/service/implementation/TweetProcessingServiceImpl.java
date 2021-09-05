@@ -126,7 +126,7 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
 	}
 
     private String getTweetLink(Status tweet) {
-        if (tweet.getURLEntities()!=null) {
+        if(tweet != null && tweet.getURLEntities() != null && tweet.getURLEntities().length > 0){
             return tweet.getURLEntities()[0].getExpandedURL();
         }
 
