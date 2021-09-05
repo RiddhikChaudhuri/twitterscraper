@@ -34,7 +34,7 @@ public class ImageServiceImpl implements ImageService {
     TweetImageRepository tweetImageRepository;
 
     public static final Set<String> SUPPORTED_IMAGE_FILES = new HashSet<>(
-            Arrays.asList(new String[]{"JPEG", "PNG", "BMP", "WEBMP", "GIF"})
+            Arrays.asList(new String[]{"JPEG", "PNG", "BMP", "WEBMP", "GIF", "JPG"})
     );
 
     private static final Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
