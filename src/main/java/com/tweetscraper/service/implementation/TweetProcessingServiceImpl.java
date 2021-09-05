@@ -9,6 +9,10 @@ import com.tweetscraper.repository.TwitterChannelRepository;
 import com.tweetscraper.repository.TwitterUserRepository;
 import com.tweetscraper.service.ImageService;
 import com.tweetscraper.service.TweetProcessingService;
+
+import twitter4j.Status;
+import twitter4j.User;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +46,7 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
 
     @Override
     @Transactional
-    public void processTweets(List<Tweet> tweets) {
+    public void processTweets(List<Status> tweets) {
         Set<TwitterUserEntity> twitterUserEntities = new HashSet<>();
         Set<TweetImageEntity> tweetImageEntities = new HashSet<>();
         Set<TweetEntity> tweetEntities = new HashSet<>();
@@ -52,19 +56,19 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
                     .id(tweet.getId())
                     .text(tweet.getText())
                     .link(getTweetLink(tweet))
-                    .lang(tweet.getLanguageCode())
+                    .lang(tweet.getLang())
                     .retweetCount(tweet.getRetweetCount())
                     .favoriteCount(tweet.getFavoriteCount())
                     .retweeted(tweet.isRetweeted())
                     .favorited(tweet.isFavorited())
-                    .twitterUserId(tweet.getFromUserId())
-                    .twitterUserName(tweet.getFromUser())
+                    .twitterUserId(tweet.getUser().getId())
+                    .twitterUserName(tweet.getUser().getName())
                     .createdAt(tweet.getCreatedAt())
                     .build();
 
-            Tweet originalTweet = tweet.getRetweetedStatus();
+            Status originalTweet = tweet.getRetweetedStatus();
             if (originalTweet != null) {
-                tweetEntity.setOriginalTwitterName(originalTweet.getFromUser());
+                tweetEntity.setOriginalTwitterName(originalTweet.getUser().getName());
                 tweetEntity.setOriginalLink(getTweetLink(originalTweet));
                 tweetEntity.setOriginalCreatedAt(originalTweet.getCreatedAt());
                 tweetEntity.setOriginalText(originalTweet.getText());
@@ -106,35 +110,38 @@ public class TweetProcessingServiceImpl implements TweetProcessingService {
         );
     }
 
-    private Set<TweetImageEntity> extractTweetedImages(Tweet tweet) {
-        Set<TweetImageEntity> images = new HashSet<>();
-        if (!Objects.isNull(tweet.getEntities().getMedia())) {
-            List<MediaEntity> mediaEntities = tweet.getEntities().getMedia();
-            // extracting images information
-            for (MediaEntity me : mediaEntities) {
-                if (me.getType().equals("photo")) {
-                    images.add(TweetImageEntity.builder().tweetId(tweet.getId()).imageUrl(mediaEntities.get(0).getMediaUrl()).build());
-                }
-            }
-        }
-        return images;
-    }
+	private Set<TweetImageEntity> extractTweetedImages(Status tweet) {
+		Set<TweetImageEntity> images = new HashSet<>();
+		if (!Objects.isNull(tweet.getMediaEntities())) {
+			twitter4j.MediaEntity[] mediaEntities = tweet.getMediaEntities();
+			// extracting images information
+			for (int i = 0; i < mediaEntities.length; i++) {
+				if (mediaEntities[i].getType().equals("photo")) {
+					images.add(TweetImageEntity.builder().tweetId(tweet.getId())
+							.imageUrl(mediaEntities[i].getMediaURL()).build());
+				}
+			}
+		}
+		return images;
+	}
 
-    private String getTweetLink(Tweet tweet) {
-        if (tweet.getEntities().hasUrls()) {
-            return tweet.getEntities().getUrls().get(0).getExpandedUrl();
+    private String getTweetLink(Status tweet) {
+        if (tweet.getURLEntities()!=null) {
+            return tweet.getURLEntities()[0].getExpandedURL();
         }
 
         return null;
     }
 
-    private TwitterUserEntity getTwitterUserEntity(TwitterProfile twitterProfile) {
+    private TwitterUserEntity getTwitterUserEntity(User twitterProfile) {
         return TwitterUserEntity.builder()
-                .url(twitterProfile.getUrl())
+                .url(twitterProfile.getURL())
                 .id(twitterProfile.getId())
                 .name(twitterProfile.getName())
                 .screenName(twitterProfile.getScreenName())
-                .profileImageUrl(twitterProfile.getProfileImageUrl())
+                .profileImageUrl(twitterProfile.getBiggerProfileImageURL())
                 .build();
     }
+
+
 }

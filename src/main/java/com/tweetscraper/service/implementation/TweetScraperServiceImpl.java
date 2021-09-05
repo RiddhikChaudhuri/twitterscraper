@@ -1,87 +1,88 @@
 package com.tweetscraper.service.implementation;
 
-import com.tweetscraper.config.TwitterTemplateCreator;
-import com.tweetscraper.repository.TweetRepository;
-import com.tweetscraper.service.TweetProcessingService;
-import com.tweetscraper.service.TweetScraperService;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.social.twitter.api.SearchResults;
-import org.springframework.social.twitter.api.Tweet;
-import org.springframework.social.twitter.api.Twitter;
-import org.springframework.social.twitter.api.TwitterProfile;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.tweetscraper.config.TwitterTemplateCreator;
+import com.tweetscraper.repository.TweetRepository;
+import com.tweetscraper.service.TweetProcessingService;
+import com.tweetscraper.service.TweetScraperService;
+
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 @Service
 public class TweetScraperServiceImpl implements TweetScraperService {
 
-    @Autowired
-    private TwitterTemplateCreator twitterTemplateCreator;
+	@Autowired
+	private TwitterTemplateCreator twitterTemplateCreator;
 
-    @Autowired
-    private TweetProcessingService tweetProcessingService;
+	@Autowired
+	private TweetProcessingService tweetProcessingService;
 
-    @Autowired
-    private TweetRepository tweetRepository;
+	@Autowired
+	private TweetRepository tweetRepository;
 
-    @Value("${image.directory}")
-    private String tweetImageDirectory;
+	@Value("${image.directory}")
+	private String tweetImageDirectory;
 
-    @Value("${twitter.channel}")
-    private String twitterChannel;
+	@Value("${twitter.channel}")
+	private String twitterChannel;
 
-    private static final Logger log = LoggerFactory.getLogger(TweetScraperServiceImpl.class);
+	@Autowired
+	private Environment environment;
 
-    @Override
-    public void findTweets(String accountName) {
-        try {
-            Twitter twitter = twitterTemplateCreator.getTwitterTemplate(accountName);
+	private static final Logger log = LoggerFactory.getLogger(TweetScraperServiceImpl.class);
 
-            TwitterProfile channelProfile = twitter.userOperations().getUserProfile(twitterChannel);
-            tweetProcessingService.processChannelInformation(channelProfile);
+	@Override
+	public void findTweets(String accountName) { 
+		String consumerKey = environment.getProperty(accountName + ".consumerKey");
+		String consumerSecret = environment.getProperty(accountName + ".consumerSecret");
+		String accessToken = environment.getProperty(accountName + ".accessToken");
+		String accessTokenSecret = environment.getProperty(accountName + ".accessTokenSecret");
 
-            boolean quitSyncing = false;
+		ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true).setOAuthConsumerKey(consumerKey).setOAuthConsumerSecret(consumerSecret)
+				.setOAuthAccessToken(accessToken).setOAuthAccessTokenSecret(accessTokenSecret);
+		TwitterFactory tf = new TwitterFactory(cb.build());
+		twitter4j.Twitter twitter = tf.getSingleton();
 
-            int iteration = 1;
-            Long maxTweetId = -1L;
-            Long sinceId = -1L;
 
-            do {
+		Query query = new Query("source:" + twitterChannel);
+		try {
+			QueryResult result = twitter.search(query);
+			List<Status> tweets = result.getTweets();
 
-                maxTweetId = tweetRepository.maxTweetId();
-                sinceId = maxTweetId != null ? maxTweetId : -1L;
+			int iteration = 1;
+			Long maxTweetId = -1L;
+			Long sinceId = -1L;
 
-                log.info("## Search Params for iteration # (" + iteration + ")" + " : sinceId = " + sinceId);
+			maxTweetId = tweetRepository.maxTweetId();
+			sinceId = maxTweetId != null ? maxTweetId : -1L;
 
-                SearchResults searchResults = twitter.searchOperations().search(twitterChannel, 100, sinceId, -1L);
-                List<Tweet> tweets = searchResults.getTweets();
+			log.info("## Search Params for iteration # (" + iteration + ")" + " : sinceId = " + sinceId);
 
-                if (tweets != null && !tweets.isEmpty()) {
-                    log.info("## Tweet count in iteration # (" + iteration + ") = " + tweets.size());
-                    tweetProcessingService.processTweets(tweets);
-                }
+			// SearchResults searchResults =
+			// twitter.searchOperations().search(twitterChannel, 100, sinceId, -1L);
+			// List<Tweet> tweets = searchResults.getTweets();
 
-                quitSyncing = ((tweets != null && tweets.isEmpty()) || searchResults.isLastPage());
+			if (tweets != null && !tweets.isEmpty()) {
+				log.info("## Tweet count in iteration # (" + iteration + ") = " + tweets.size());
+				tweetProcessingService.processTweets(tweets);
+			}
+		} catch (Exception exception) {
+			 log.error("Exception occurred while fetching data from the Twitter Api.");
+		}
 
-                log.info("## Search Result Data from iteration # = (" + iteration + ")"
-                        + " ; sinceId = " + searchResults.getSearchMetadata().getSinceId()
-                        + " ; maxId = " + searchResults.getSearchMetadata().getMaxId()
-                        + "; isLastPage = " + searchResults.isLastPage()
-                );
-                log.info("==============================================================================");
-                iteration++;
-            } while (!quitSyncing);
-
-        } catch (Exception exception) {
-            log.error("Exception occurred while fetching data from the Twitter Api.", exception);
-        }
-
-        log.debug("#### TWEET SYNC COMPLETED #### ");
-    }
+		log.debug("#### TWEET SYNC COMPLETED #### ");
+	}
 }
-
-
