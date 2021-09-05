@@ -101,8 +101,8 @@ public class ImageServiceImpl implements ImageService {
         return tweetImageRepository.save(imageEntity);
     }
 
-
-    private String downloadImage(String imageUrl) {
+    @Override
+    public String downloadImage(String imageUrl) {
         if (imageUrl != null) {
 //            log.debug("Downloading the image " + imageUrl);
             try {

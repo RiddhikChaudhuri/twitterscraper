@@ -32,6 +32,9 @@ public class TwitterChannelEntity implements Serializable {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "profile_image_location")
+    private String profileImageLocation;
+
     @Column(name = "url")
     private String url;
 

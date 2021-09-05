@@ -14,4 +14,6 @@ public interface ImageService {
     void downloadAndSaveTweetImages(Set<TweetImageEntity> tweetImageEntities);
 
     TweetImageEntity downloadAndSaveTweetImage(Long tweetId, String imageUrl);
+
+    String downloadImage(String imageUrl);
 }

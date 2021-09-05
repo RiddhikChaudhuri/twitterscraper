@@ -16,7 +16,6 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.List;
 
@@ -46,21 +45,13 @@ public class TweetScraperServiceImpl implements TweetScraperService {
 
     private static final Logger log = LoggerFactory.getLogger(TweetScraperServiceImpl.class);
 
-    /*
-
-        twitterscraper.consumerKey=brbXvzByGuqChJAtT3uEFJRHq
-        twitterscraper.consumerSecret=EY2Q78WHlfYLh56mqRXVAQ44DT9f0oRTmTTX82KhN8CcWPQa5z
-
-        twitterscraper.accessToken=344916323-vQw5A9KJXzPSj6nIxqcTwNcuv0GU6FnHrF7H8GW4
-        twitterscraper.accessTokenSecret=YjTNZxU0cuQK6n7zrsJgMlFSzgL1rzltO1d42YIqlxfOS
-        */
     @Override
     public void findTweets(String accountName) {
         try {
             Twitter twitter = twitterFactory.getInstance();
 
-			User user = twitter.showUser(twitterChannel);
-			tweetProcessingService.processChannelInformation(user);
+            User user = twitter.showUser(twitterChannel);
+            tweetProcessingService.processChannelInformation(user);
 
             boolean quitSyncing = false;
 
@@ -74,6 +65,7 @@ public class TweetScraperServiceImpl implements TweetScraperService {
             query.setCount(100);
 
             do {
+
                 QueryResult result = twitter.search(query);
                 List<Status> tweets = result.getTweets();
 
@@ -84,11 +76,14 @@ public class TweetScraperServiceImpl implements TweetScraperService {
                     tweetProcessingService.processTweets(tweets);
                 }
 
-                if(result.hasNext()){
-                    quitSyncing = !result.hasNext();
+                quitSyncing = !result.hasNext();
+                if (result.hasNext()) {
+                    log.info("## Search Params for iteration # (" + iteration + ")" + " : Next Query = " + result.nextQuery());
                     query = result.nextQuery();
                 }
-            }while (!quitSyncing);
+                iteration++;
+                log.info("=============================================================================");
+            } while (!quitSyncing);
 
         } catch (Exception exception) {
             log.error("Exception occurred while fetching data from the Twitter Api.");

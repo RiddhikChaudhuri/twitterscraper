@@ -1,10 +1,9 @@
 package com.tweetscraper.scheduletasks;
 
+import com.tweetscraper.service.TweetScraperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.tweetscraper.service.TweetScraperService;
 
 @Component
 public class TweetScraperScheduleTask {
@@ -17,12 +16,9 @@ public class TweetScraperScheduleTask {
 
     // 1hr interval between invocations measured from the completion of the task
     // 1hr = 60*60*1000
-   // @Scheduled(fixedDelay = 60 * 60 * 1000)
-   // @Scheduled(fixedDelay = 5000)
+    // @Scheduled(fixedDelay = 60 * 60 * 1000)
+    // @Scheduled(fixedDelay = 5000)
     public void scrapeTweets() {
-    	
-       // Twitter twitter = TwitterFactory.getSingleton();
-
         tweetScraperService.findTweets(accountName);
     }
 }
