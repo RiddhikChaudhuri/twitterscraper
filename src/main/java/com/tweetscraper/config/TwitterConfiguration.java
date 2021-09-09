@@ -38,7 +38,8 @@ public class TwitterConfiguration {
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerSecret)
                 .setOAuthAccessToken(accessToken)
-                .setOAuthAccessTokenSecret(accessTokenSecret);
+                .setOAuthAccessTokenSecret(accessTokenSecret)
+                .setTweetModeExtended(true);
         return new TwitterFactory(cb.build());
     }
 
